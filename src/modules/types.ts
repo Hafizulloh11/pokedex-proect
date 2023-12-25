@@ -3,6 +3,12 @@ export namespace IEntity {
   name: string;
   url: string;
  }
+ export interface PokemonList {
+  name: string;
+  url: string;
+  image: string;
+  pokedexNumber: number;
+ }
 
 }
 
@@ -13,7 +19,7 @@ export namespace IApi {
      count: number;
      next: string | null;
      previous: string | null;
-     results: IEntity.Pokemon[];
+     results: IEntity.PokemonList[];
    }
   }
  }

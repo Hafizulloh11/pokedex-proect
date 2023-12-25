@@ -1,4 +1,4 @@
-import { Box, LoadingOverlay } from '@mantine/core';
+import { Flex, LoadingOverlay } from '@mantine/core';
 
 import { usePokemons } from 'modules/hooks';
 
@@ -11,9 +11,9 @@ const Home = (props: HomeProps) => {
 
   if (isLoading) return <LoadingOverlay visible overlayBlur={2} />;
   return (
-    <Box>
-      <PokemonList />
-    </Box>
+    <Flex p={30} align="center" justify="center">
+      <PokemonList pokemons={pokemons} />
+    </Flex>
   );
 };
 

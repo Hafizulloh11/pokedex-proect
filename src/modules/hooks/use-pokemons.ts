@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { notifications } from '@mantine/notifications';
 
+import config from 'config';
+
 import { Api, Types } from '..';
 
 export const usePokemons = () => {
@@ -14,10 +16,24 @@ export const usePokemons = () => {
     }
   });
 
+  const getImagesToPokemon = (pokemon: Types.IEntity.Pokemon) => {
+    const pokedexNumber = parseInt(pokemon.url.replace(`${config.api.baseURL}/pokemon/`, '').replace('/', ''), 10);
+
+    const pokemonList: Types.IEntity.PokemonList = {
+      name: pokemon.name,
+      url: pokemon.url,
+      image: `${config.api.pokemonImagesURL}/${pokedexNumber}.png`,
+      pokedexNumber
+    };
+
+    return pokemonList;
+  };
+
   useEffect(() => {
     const request = async () => {
       try {
-        const { data: pokemons } = await Api.Pokemons.List();
+        const { data } = await Api.Pokemons.List();
+        const pokemons = { ...data, results: data.results.map(pokemon => getImagesToPokemon(pokemon)) };
 
         setState({ pokemons, isLoading: false });
       } catch (err: any) {
@@ -36,6 +52,5 @@ export const usePokemons = () => {
 
     request();
   }, []);
-  console.log(state.pokemons)
   return state;
 };
