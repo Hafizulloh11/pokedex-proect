@@ -15,6 +15,8 @@ export const usePokemons = () => {
       results: []
     }
   });
+  const [nextUrl, setNextUrl] = useState<string | null>(`${config.api.baseURL}/pokemon`);
+  const [prevUrl, setPrevUrl] = useState<string | null>(`${config.api.baseURL}/pokemon`);
 
   const getImagesToPokemon = (pokemon: Types.IEntity.Pokemon) => {
     const pokedexNumber = parseInt(pokemon.url.replace(`${config.api.baseURL}/pokemon/`, '').replace('/', ''), 10);
@@ -29,28 +31,35 @@ export const usePokemons = () => {
     return pokemonList;
   };
 
+  const request = async () => {
+    try {
+      const { data } = await Api.Pokemons.List(`${config.api.baseURL}/pokemon?limit=1000&offset=0`);
+      // const { data: types } = await Api.Pokemons.Types();
+      const pokemons: Types.IApi.Pokemon.List.Response = {
+        ...data,
+        results: [...state.pokemons.results, ...data.results.map((pokemon, idx) => getImagesToPokemon(pokemon))]
+      };
+
+      setState({ pokemons, isLoading: false });
+      // setNextUrl(pokemons.next);
+      // setPrevUrl(pokemons.previous);
+    } catch (err: any) {
+      notifications.show({ message: err?.message, color: 'red' });
+      setState({
+        pokemons: {
+          count: 0,
+          next: '',
+          previous: '',
+          results: []
+        },
+        isLoading: false
+      });
+    }
+  };
+
   useEffect(() => {
-    const request = async () => {
-      try {
-        const { data } = await Api.Pokemons.List();
-        const pokemons = { ...data, results: data.results.map(pokemon => getImagesToPokemon(pokemon)) };
-
-        setState({ pokemons, isLoading: false });
-      } catch (err: any) {
-        notifications.show({ message: err?.message, color: 'red' });
-        setState({
-          pokemons: {
-            count: 0,
-            next: '',
-            previous: '',
-            results: []
-          },
-          isLoading: false
-        });
-      }
-    };
-
     request();
   }, []);
-  return state;
+
+  return { ...state };
 };

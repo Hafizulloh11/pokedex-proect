@@ -1,4 +1,8 @@
-import { Card, Image } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Card, Flex, Text } from '@mantine/core';
+import { useHover } from '@mantine/hooks';
+import { getColorFromUrl } from 'utils/colors';
 
 import { Types } from 'modules';
 
@@ -6,13 +10,41 @@ interface PokemonProps {
   pokemon: Types.IEntity.PokemonList;
 }
 
-const Pokemon = ({ pokemon }: PokemonProps) => (
-  <Card w="300px" style={{ textAlign: 'center' }} shadow="xl" padding="lg" radius="md" withBorder>
-    <Card.Section sx={{ objectFit: 'contain' }}>
-      <Image src={pokemon.image} alt={pokemon.name} />
-    </Card.Section>
-    {pokemon.name}
-  </Card>
-);
+const Pokemon = ({ pokemon }: PokemonProps) => {
+  const [pokemonColor, setPokemonColor] = useState<string | null>(null);
+  const { hovered, ref } = useHover();
+
+  const getPokemonColor = async () => {
+    const color = await getColorFromUrl(pokemon.image);
+
+    if (color) setPokemonColor(color);
+  };
+
+  useEffect(() => {
+    getPokemonColor();
+  }, []);
+
+  return (
+    <Link to={`pokemon/${pokemon.name}`} style={{ textDecoration: 'none', color: 'white' }}>
+      <Card
+        ref={ref}
+        w="250px"
+        style={{ textAlign: 'center', backgroundColor: pokemonColor!, cursor: 'pointer' }}
+        shadow={hovered ? 'xl' : 'sm'}
+        padding="lg"
+        radius="md"
+        withBorder
+      >
+        <Card.Section sx={{ objectFit: 'contain' }}>
+          <img width={150} src={pokemon.image ? pokemon.image : ''} alt={pokemon.name} />
+        </Card.Section>
+        <Flex direction="column" align="center" sx={{ color: 'white', textTransform: 'capitalize', fontWeight: 500, fontSize: '26px' }}>
+          <Text>{pokemon.name}</Text>
+          <Text>#{pokemon.pokedexNumber}</Text>
+        </Flex>
+      </Card>
+    </Link>
+  );
+};
 
 export default Pokemon;
