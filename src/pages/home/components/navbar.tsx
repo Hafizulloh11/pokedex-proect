@@ -2,13 +2,16 @@ import { Box, Flex, Input, NativeSelect } from '@mantine/core';
 
 import { Types } from 'modules';
 
+import { PokemonTypes } from '../../../modules/constants';
+
 interface NavbarProps {
   onSearch: (value: string) => void;
   value: string;
-  pokemonTypes: Types.IEntity.pokemonTypes[];
+  selectedType: Types.IEntity.pokemonTypes | null;
+  onChangeSelectedType: (selectedType: string) => void;
 }
 
-const Navbar = ({ onSearch, value, pokemonTypes }: NavbarProps) => (
+const Navbar = ({ onSearch, value, onChangeSelectedType, selectedType }: NavbarProps) => (
   <Box w="100%" h="max-content" p={15} sx={{ backgroundColor: '#eee' }}>
     <Flex align="center" justify="space-between">
       <div>
@@ -22,12 +25,11 @@ const Navbar = ({ onSearch, value, pokemonTypes }: NavbarProps) => (
       <Flex gap={20}>
         <Input value={value} radius="md" placeholder="Search pokemon..." onChange={e => onSearch(e.target.value)} />
         <NativeSelect
-          // value={pokemonType}
-          // onChange={e => {
-          //   onChangeType(e.target.value);
-          // }}
+          onChange={e => {
+            onChangeSelectedType(e.target.value);
+          }}
           radius="md"
-          data={['any', ...pokemonTypes.map(type => type.name)]}
+          data={['any', ...PokemonTypes.map(pokemon => pokemon.name)]}
         />
       </Flex>
     </Flex>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, Flex, Text } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import { getColorFromUrl } from 'utils/colors';
 
 import { Types } from 'modules';
@@ -15,9 +16,13 @@ const Pokemon = ({ pokemon }: PokemonProps) => {
   const { hovered, ref } = useHover();
 
   const getPokemonColor = async () => {
-    const color = await getColorFromUrl(pokemon.image);
+    try {
+      const color = await getColorFromUrl(pokemon.image);
 
-    if (color) setPokemonColor(color);
+      if (color) setPokemonColor(color);
+    } catch (err: any) {
+      notifications.show({ message: err?.message, color: 'red' });
+    }
   };
 
   useEffect(() => {
@@ -36,7 +41,7 @@ const Pokemon = ({ pokemon }: PokemonProps) => {
         withBorder
       >
         <Card.Section sx={{ objectFit: 'contain' }}>
-          <img width={150} src={pokemon.image ? pokemon.image : ''} alt={pokemon.name} />
+          <img width={150} src={pokemon.image} alt={pokemon.name} />
         </Card.Section>
         <Flex direction="column" align="center" sx={{ color: 'white', textTransform: 'capitalize', fontWeight: 500, fontSize: '26px' }}>
           <Text>{pokemon.name}</Text>

@@ -38,9 +38,7 @@ export const usePokemon = ({ pokemonName }: usePokemonProps) => {
   }, [pokemonName]);
 
   useEffect(() => {
-    if (pokemon) {
-      getPokemonColor();
-    }
+    if (pokemon) getPokemonColor();
   }, [pokemon]);
 
   return { pokemon, isLoading };
