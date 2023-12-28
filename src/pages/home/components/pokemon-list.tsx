@@ -9,7 +9,7 @@ interface PokemonListProps {
 }
 
 const PokemonList = ({ pokemons }: PokemonListProps) => (
-  <Box display="inline-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '20px'}}>
+  <Box display="inline-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: '20px' }}>
     {pokemons.map(pokemon => (
       <Box key={pokemon.name}>
         <Pokemon pokemon={pokemon} />
